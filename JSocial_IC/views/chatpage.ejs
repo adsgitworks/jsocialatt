@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">    
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <title>JSocial - chat</title>
+</head>
+<style>
+    /* grid system and initial configurations */
+
+    * {
+        font-family: 'Roboto sans-serif'
+    }
+    body,html {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin : 0;
+        box-sizing: border-box;
+        background-color: #dfdfdf;
+        
+    }
+    #main_container {
+
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        display: grid;
+
+        min-width: 664px;
+        min-height: 380px;
+
+        grid-template-columns: 35% 1fr;
+        grid-template-rows: 12.5% 10% 1fr;
+
+        grid-template-areas: 
+            'painel_user chat_area'
+            'search chat_area'
+            'people chat_area'
+    }
+    #painel_user {
+        background-color: #eeeeee;
+        grid-area: painel_user
+    }#chat_area {
+        grid-area: chat_area
+    }#search {
+        grid-area: search;
+        background-color: transparent;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #people {
+        grid-area: people;
+        background-color: white;
+    }
+
+    @media(max-width: 400px) {
+        #main_container {
+            grid-template-areas: 
+            'painel_user painel_user'
+            'search search'
+            'people people';
+
+            min-width: 0px;
+           
+        }
+        #chat_area {
+            display: none;
+        }
+    }
+
+    #painel_user,#chat_area,#search,#people {
+        border:0px solid #f0f0ed;
+    }
+    /* ends here */ 
+
+    /* inside items css */
+
+    #search_container {
+
+        width: 85%;
+        height: 70%;
+
+        border-radius: 18px;
+        background-color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+    }
+    #search_icon {
+        width: 6%;
+        height: 60%;
+        margin-left: 20px;
+    }
+    #search_input {
+        margin-left: 30px;
+        width: 50%;
+        height: 70%;
+        border:none;
+        outline: none;
+        font-size: 20px;
+    }
+    
+    #painel_user {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #user_pic_container {
+        height: 70px;
+        width: 90px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+    }
+    #user_pic {
+        width: 50%;
+        height: 65%;
+        border-radius: 100%;
+        cursor: pointer;
+        
+        
+    }
+    .mdl-button.mdl-js-button.mdl-button--fab.mdl-button--mini-fab {
+        outline: none;
+         margin: 0;
+         margin-right: 50px;
+    }
+    /* ends here */
+
+    /* intro css */
+
+    #intro_area {
+        width: calc(100% - 30px);
+        height: calc(100% - 30px);
+        margin-top: 15px;
+        margin-left: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    #picarea{
+        width: 100%;
+        height: 49.16%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+    #initialpic {
+        border-radius: 100%;
+        width: 250px;
+        height: 250px;
+        
+    }
+    #textarea{
+        width: 100%;
+        height: 40.16%;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+    #fh2{
+        margin: 0;
+        margin-top: 28px;
+        font-size: 37px;
+        color: #4b5961;
+        text-align: center;
+        font-weight: normal;
+        
+    }
+
+   #txtintro{
+        width: 60%;
+        margin-top: 28px;
+        color: #929fa6;
+        margin-top: 28px;
+        height: 36.61%;
+        line-height: 20px;
+        font-size: 17px;
+        margin-bottom: 28px;
+        word-spacing: 5px;
+        text-align: center;
+       
+       
+    }
+   
+
+    /*ends here */
+
+    /* float options css */
+        .children_options {
+            width: 100%;
+            height: 20%;
+            padding: 20px;
+           
+            cursor: pointer;
+            color: #444444;
+        }
+        .children_options:last-child {
+            margin-bottom: 20px;
+        }
+        .children_options:hover {
+           
+            color: lightblue;
+            transition: 0.25s;
+        }
+        #float_parent {
+            
+            font-size: 0px;
+            font-family: inherit;
+
+            box-sizing: border-box;
+            width: 0px;
+            height: 0px;
+           
+            position: absolute;
+            background-color: white;
+            z-index: 100;
+            border-radius: 3px;
+
+            margin:0;
+            padding: 0;
+        
+            -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);
+            box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);  
+
+             
+        }
+    /* ends here */
+
+    /* float user infos */
+     
+    #user_infos {
+        z-index: 100;
+        height: 100vh;
+        min-height: 300px;
+        position: absolute;
+        flex-direction: column;
+        display: none;
+
+        overflow: auto;
+    }
+    #green_area {
+        background-color:#00bfa5;
+        width: 100%;
+        height: 22.5%;
+
+        display: flex;
+        align-items: flex-end;
+    }
+    #row {
+        width: 100%;
+        height: 40px;        
+        margin-bottom: 30px;
+        display: flex;
+        color: white;
+        font-size: 2em;
+
+        align-items: center;
+    }
+    #icback {
+        width: 30px;
+        height: 35px;
+        margin-left: 30px;
+        cursor: pointer;
+    }
+    #row > span {
+        margin-left: 30px;
+    }
+    
+    #pic_area {
+        width: 100%;
+        height: 50%;
+        background-color: #eeeeee;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #user_pic_zoom, #pic_area > span, #picChange{
+        width: 42.64%;
+        height: 65%;
+        border-radius: 100%;
+    }
+    #pic_area > span{
+        position: absolute;
+        height: 33.5%;
+        transition: .5s;
+        cursor: pointer;
+    }
+    #pic_area > span:hover {
+        opacity: .35;
+        background-color: grey;
+    }
+    #picChange {
+        height: 33.5%;
+        position: absolute;
+        visibility: hidden;
+    }
+
+    #name_area {
+        width: 100%;
+        height: 27.5%;
+        color: #00bfa5;
+        font-size: 1.35em; 
+        background-color: white;
+    }
+    #name_area > div:nth-child(1), #name_area > div:nth-child(3){
+        height: 60px;
+    }
+    #name_area > div:nth-child(2){
+        height: 30px;
+        display: flex;
+    }
+    #name_area > div:nth-child(1) > span,#name_area > div:nth-child(3) > span{
+        margin-left: 40px;
+        top: 10px;
+        position: relative;
+    }
+    #name_area > div:nth-child(3) {
+        margin-top: 12.5px;
+
+        display: flex;
+        flex-direction: column
+    }
+    #name_area > div:nth-child(2) > input {
+        width: 70%;
+        position: relative;
+        margin-left: 40px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        outline: none;
+        background-color: transparent;
+        border-bottom: 2px solid #eeeeee;
+        cursor:unset;
+    }
+    #pencil {
+        width: 25px;
+        height: 25px;
+        position: relative;
+        justify-self: center;
+        align-self:center;
+        cursor: pointer;
+        
+    }
+    #confirmChanges {
+        width: 24px;
+        height: 24px;
+        justify-self: center;
+        align-self:center;
+        visibility: hidden;
+        cursor: pointer;
+    }
+    #iduser {
+        color: black;
+        margin-top: 10px;
+    }
+    /* ends here */
+
+    /* searched users css */
+
+    #searched {
+        height: calc(50% + 80px);
+        width: 100%;
+        background-color: white;
+    }
+    #spcontainer {
+        width: 100%;
+        height: 100%;
+        
+    }
+    .pcontainer {
+        width: 100%;
+        height: 80px;
+        
+        border-bottom: 2px solid #f4f5f5;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .user_pic_container {
+        width: 80px;
+        height: 100%;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .user-pic-min {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        margin-left: 20px;
+       
+    }
+    .searchedname{
+        font-size: 19px;
+        margin-left: 10px;
+    }
+
+    .adduser{
+        width: 20px;
+        height: 20px;
+        margin-left: 5px;
+        margin-top: 5px;
+        cursor: pointer;
+    }
+    /* ends here */
+
+</style>
+
+<body>
+    <main id="main_container">
+    
+        <div id="gid" style="position: absolute; width: 0px; height: 0px;"></div>
+
+        <div id="painel_user">
+            <div id="user_pic_container">
+                <img id="user_pic" src=<%= userpic %>>
+            </div>
+
+            <button name="btopts" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                <i class="material-icons">add</i>
+            </button>
+            
+        </div>
+
+        <div id="search">
+            <div id="search_container">
+                <img id="search_icon" src="http://icons.iconarchive.com/icons/icons8/ios7/256/Very-Basic-Search-icon.png">
+                    
+                </img>
+                <input id="search_input" type="text" placeholder="Procurar amigo"/>
+            </div>
+        </div>
+
+        <div id="people" ></div>
+        
+        <div id="chat_area" style="background-color: #f7f9fa">
+            <div id="intro_area">
+               <div id="picarea">
+                   <img id="initialpic" src=<%= userpic %>>
+               </div>
+               <div id="textarea">
+                    <h1 id="fh2">Seja bem vindo ao JSocial</h1>
+                    <span id="txtintro">
+                        Adicione amigos e inicie uma conversa agora mesmo!
+                        O JSocial é um projeto baseado no <a class="txt-info" style="font-weight: bolder; text-decoration: none;" href="https://web.whatsapp.com">WhatsApp Web.</a>
+                        Para adicionar um amigo, clique no botão "+" que se encontra em seu perfil. Divirta-se no JSocial!
+                    </span>
+                    
+               </div>
+            </div>
+        </div>
+
+        <div id="user_infos">
+            <div id="green_area">
+                <div id="row">
+                    <img id="icback" src="./arrowleft.png"/>
+                    <span>Perfil</span>
+                </div>
+            </div>
+
+            <div id="pic_area">
+                <input type="file" id="picChange" changed="false" name="fileupload"/>
+                    <span sobrepor></span>
+                    <img id="user_pic_zoom" src=<%= userpic %>>
+            </div>
+
+            <div id="name_area">
+                <div>
+                    <span>Seu Nome</span>
+                </div>
+
+                <div>
+                    <input type="text" id="nameipt" value=<%=username%> readonly="readonly"/>
+                    <img id="pencil" src="./pencil.png"/>
+                    <img id="confirmChanges" src="./correct.png">
+                    
+                </div>
+
+                <div>
+                    <span>Seu ID</span>
+                    <span id="iduser">
+                        <%= userid %>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="options.js"></script>
+<script type="text/javascript" src="imagebutton.js"></script>
+<script type="text/javascript" src="changename.js"></script>
+<script type="text/javascript" src="changeUserPic.js"></script>
+<script type="text/javascript" src="findUser.js"></script>
+
+
+
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "JSocial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "1.18.9"
+  },
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "ejs": "^2.6.1",
+    "express": "4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "multer": "1.4.1",
+    "socket.io": "^2.2.0"
+  }
+}

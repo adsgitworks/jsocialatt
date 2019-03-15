@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registre-se em JSocial!</title>
+
+    <style>
+        html,body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            
+        }
+        main {
+            
+            min-width: 400px;
+            min-height: 300px;
+           
+            width: calc(100% - 100px - 100px);
+           
+            height: 100%;
+            margin-left: 100px;
+
+            
+        }
+        form {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);
+            box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.75);
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 0;
+            margin: 0;
+            
+            
+           
+    ;
+        }
+
+        #inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column    
+        }
+        input.login {
+            width:  337px;
+            height: 60px;
+            font-size: 20px;
+            padding: 12px 20px;
+            margin-bottom:2px;
+            box-sizing: border-box;
+            border: 3px solid lightblue;
+            -webkit-transition: 0.5s;
+            transition: 0.5s;
+            outline: none;
+            background-color:snow;
+}
+        input.login:focus {
+        border: 3px solid lightskyblue;
+}
+        input.login::placeholder {
+            font-size: 20px;
+}
+        #sending {
+            width: 150px;
+            height: 60px;
+        }
+
+        @media(max-width:800px){
+            input.login,#inputs {
+                width: calc(100% - 30px);
+            }
+            #sending {
+                width: calc(50% - 50px);
+                min-width: 100px;
+            }
+
+        @media(max-width: 600px) {
+           main {
+                margin-left: 0px;
+                width: 100%;
+            }
+        }
+} 
+    </style>
+    </head>
+    <body class="bg-secondary">
+
+        <main>
+                
+    <form class="bg-dark" name="SD" action="send" method="POST">
+        <h2 style="font-size: 35px;" class="text-secondary">Preencha os campos</h2>
+        <div id="inputs">
+            <input type="text" placeholder="Email" class="login"/>
+            <input type="text" placeholder="Usuário" class="login"/>      
+            <input type="password" placeholder="Senha" class="login"/>
+        </div>    
+    
+    <button id="sending" class="btn btn-info">Registrar</button>
+    </form>        
+        </main>
+    </body>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+</html>
+
+
+<script type="text/javascript">
+
+        /* ajax method -> sending data to server */ 
+    
+        (function(){
+            let form = document.SD
+            form.onsubmit = async event => {
+                event.preventDefault()
+
+                let formData = new FormData()
+                formData.append('Email',form[0].value)
+                formData.append('Usuario',form[1].value)
+                formData.append('Senha',form[2].value)
+
+                let options = {
+                    method: form.method,
+                    body: new URLSearchParams(formData)
+                }
+
+                fetch(form.action,options)
+                    .then(resp => resp.text())
+                    .then(r => {
+                        if(parseFloat(r)) window.location.pathname = '/'
+                        else alert('usuario ou email já existentes.')
+                    })
+    
+            }
+        })()
+    
+</script>
